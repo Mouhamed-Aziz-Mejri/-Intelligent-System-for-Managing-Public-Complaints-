@@ -33,28 +33,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
         final String username;
-        if (StringUtils.isEmpty(authHeader) || org.apache.commons.lang3.StringUtils.startsWith(authHeader , "Bearer ")) {
+
+        System.out.println("Request URL: " + request.getRequestURL());
+        System.out.println("Authorization Header: " + authHeader);
+
+        if (!StringUtils.hasText(authHeader) || !authHeader.startsWith("Bearer ")) {
+            System.out.println("Authorization header is missing or malformed. Skipping authentication.");
             filterChain.doFilter(request , response);
             return;
         }
+
         jwt = authHeader.substring(7);
+        System.out.println("Extracted JWT: " + jwt);
+
         username = jwtService.extractUserName(jwt);
+        System.out.println("Extracted Username from JWT: " + username);
 
         if (!StringUtils.isEmpty(username) && SecurityContextHolder.getContext().getAuthentication() == null) {
+            System.out.println("No existing authentication found. Validating token...");
+
             UserDetails userDetails = userService.userDetailsService().loadUserByUsername(username);
+            System.out.println("Loaded UserDetails: " + userDetails.getUsername());
 
             if (jwtService.isTokenValid(jwt , userDetails)) {
+                System.out.println("Token is valid. Setting security context.");
+
                 SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken
                         (userDetails , null , userDetails.getAuthorities());
-            token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            securityContext.setAuthentication(token);
-            SecurityContextHolder.setContext(securityContext);
-
+                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                securityContext.setAuthentication(token);
+                SecurityContextHolder.setContext(securityContext);
+            } else {
+                System.out.println("Invalid token. Authentication not set.");
             }
+        } else {
+            System.out.println("Username is empty or authentication already exists.");
         }
-        filterChain.doFilter(request , response);
 
+        filterChain.doFilter(request , response);
     }
 }

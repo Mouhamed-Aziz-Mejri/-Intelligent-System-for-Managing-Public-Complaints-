@@ -33,6 +33,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     public User signUp(SignUpRequest request) {
+
         User user = new User();
 
         user.setFirstName(request.getFirstName());
@@ -41,7 +42,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         user.setUsername(request.getUsername());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         return userRepository.save(user);
-
     }
 
     public JwtAuthenticationResponse signIn(SignInRequest request) {
