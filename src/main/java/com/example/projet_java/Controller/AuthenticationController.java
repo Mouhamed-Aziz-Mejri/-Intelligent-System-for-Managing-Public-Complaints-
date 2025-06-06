@@ -25,12 +25,25 @@ public class AuthenticationController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@RequestBody SignUpRequest request) {
-        return  ResponseEntity.ok(authenticationService.signUp(request));
-    }
+        try {
+
+            return  ResponseEntity.ok(authenticationService.signUp(request));
+
+        }catch (Exception e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }}
+
 
     @PostMapping("/signin")
-    public ResponseEntity<JwtAuthenticationResponse> signIn(@RequestBody SignInRequest request) {
-        return  ResponseEntity.ok(authenticationService.signIn(request));
+    public ResponseEntity<?> signIn(@RequestBody SignInRequest request) {
+
+            if (request.getUserName()==null || request.getPassword()==null){
+             return ResponseEntity.badRequest().body("Username or password cannot be null");
+            }else {
+
+            return  ResponseEntity.ok(authenticationService.signIn(request));
+
+        }
     }
 
     @PostMapping("/refresh")
