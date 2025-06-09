@@ -44,8 +44,6 @@ public class AdminServiceImpl implements AdminService {
     @Override
     public List<User> getAllUsersByRole(Role roleName) {
         List<User> users = adminRepository.findByRole(roleName);
-
-
         if (users.isEmpty()) {
             throw new RuntimeException("No users found with role: " + roleName);
         }
@@ -54,4 +52,31 @@ public class AdminServiceImpl implements AdminService {
     }
 
 
+    public String DeleteUser(Long id) {
+        try {
+
+            User user = adminRepository.findById(id)
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
+            adminRepository.delete(user);
+            return "User deleted successfully";
+
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error deleting user: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public String DeleteUserByUsername(String username) {
+
+        try {
+            User user = adminRepository.findAll().stream()
+                    .filter(u -> u.getUsername().equals(username))
+                    .findFirst()
+                    .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+            adminRepository.delete(user);
+            return "User deleted successfully";
+        } catch (RuntimeException e) {
+            throw new RuntimeException("Error deleting user: " + e.getMessage());
+        }
+    }
 }

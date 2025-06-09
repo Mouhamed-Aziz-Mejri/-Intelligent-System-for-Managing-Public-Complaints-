@@ -16,4 +16,8 @@ public interface AdminService {
 
     List<User>getAllUsersByRole(Role roleName) ;
 
+    String DeleteUser(Long id) ;
+
+    String DeleteUserByUsername(String username) ;
+
 }
