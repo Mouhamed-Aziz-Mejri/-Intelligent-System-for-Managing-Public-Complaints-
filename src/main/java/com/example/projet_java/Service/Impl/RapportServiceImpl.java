@@ -25,7 +25,7 @@ private final RapportRepository rapportRepository;
         @Override
         public String addRapport(Rapport rapportRequest) {
             if (rapportRequest == null) {
-                throw new IllegalArgumentException("Rapport request must not be null.");
+                throw new IllegalArgumentException("Rapport  must not be null.");
             }
             if (rapportRepository.existsByNom(rapportRequest.getNom())) {
                 throw new IllegalArgumentException("Rapport With name " + rapportRequest.getNom() + " already exists.");
@@ -37,7 +37,8 @@ private final RapportRepository rapportRepository;
                 throw new IllegalArgumentException("Rapport content must not be null.");
             }
             String fileName = rapportRequest.getNom() + ".txt";
-            Path directoryPath = Paths.get(System.getProperty("user.dir"), "Rapport Files");
+            Path directoryPath = Paths.get(System.getProperty("user.dir"),"Rapport Files");
+
             Path filePath = directoryPath.resolve(fileName);
             try {
                 if (!Files.exists(directoryPath)) {
